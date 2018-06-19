@@ -19,6 +19,7 @@
         "friendsofphp/php-cs-fixer": "^2.12",
         "mockery/mockery": "^1.1",
         "orchestra/testbench": "^3.6",
+        "php-mock/php-mock-phpunit": "^2.1",
         "phpmd/phpmd": "^2.6",
         "phpunit/phpunit": "~7.0",
         "two-thirds/artisan-anywhere": "^1.0",
