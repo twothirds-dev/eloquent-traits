@@ -31,3 +31,4 @@ Laravel Eloquent Traits can be installed through composer:
 - [DefaultSort](docs/default_sort.md)
 - [Deferred Relationships](docs/deferred_relationships.md)
 - [Field Enumeration](docs/enums.md)
+- [Geo Location](docs/geo_location.md)
