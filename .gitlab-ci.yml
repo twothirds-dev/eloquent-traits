@@ -1,0 +1,25 @@
+image: php:7.2-cli
+
+before_script:
+    - bash ci/docker_install.sh > /dev/null
+    - wget https://composer.github.io/installer.sig -O - -q | tr -d '\n' > installer.sig
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php -r "if (hash_file('SHA384', 'composer-setup.php') === file_get_contents('installer.sig')) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php'); unlink('installer.sig');"
+    - export APP_ENV=testing
+    - export APP_KEY=$(php -r 'echo md5(uniqid());')
+    - php composer.phar install --prefer-dist --no-progress --no-suggest --quiet
+
+tests:
+    script:
+        - phpdbg -qrr vendor/bin/phpunit
+
+phpCsFixer:
+    script:
+        - php vendor/bin/php-cs-fixer fix --dry-run --verbose --diff --diff-format=udiff --config=./phpcs.php
+
+messDetector:
+    script:
+        - php vendor/bin/phpmd src/ text ./phpmd.xml
+        - php vendor/bin/phpmd tests/ text ./phpmd.xml

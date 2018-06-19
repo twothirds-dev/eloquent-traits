@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+
+require 'vendor/autoload.php';
+
+$artisan = new TwoThirds\ArtisanAnywhere\Artisan(__DIR__);
+
+$artisan->registerCommands([
+    TwoThirds\TestSuite\Console\RunTestsCommand::class
+]);
+
+exit($artisan->handle());

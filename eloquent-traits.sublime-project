@@ -1,0 +1,31 @@
+{
+    "folders":
+    [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "phpcoverage": {
+            "report_path": "coverage/clover.xml"
+        }
+    },
+    "SublimeLinter": {
+        "paths": {
+            "osx": ["/usr/local/bin/"]
+        },
+        "linters": {
+            "phpmd": {
+                "cmd": "${project}/vendor/bin/phpmd",
+                "excludes": [
+                    "${project}/vendor/**/*"
+                ],
+                "rulesets": "phpmd.xml"
+            },
+            "phpcsfixer": {
+                "cmd": "${project}/vendor/bin/php-cs-fixer",
+                "config_file": "phpcs.php"
+            }
+        }
+    }
+}
