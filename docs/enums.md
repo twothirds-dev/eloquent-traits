@@ -1,8 +1,8 @@
 # Field Enumeration
 
-The `Enum` trait is a really useful way to allow you to pre-define all of the valid values for a given field on a model and enforce that their values are set appropriately. This basically allows you to treat a field as a menu without the database overhead of dealing with true enum fields or lookup tables.
+The `Enums` trait is a really useful way to allow you to pre-define all of the valid values for a given field on a model and enforce that their values are set appropriately. This basically allows you to treat a field as a menu without the database overhead of dealing with true enum fields or lookup tables.
 
-### Add the `Enum` trait to your model
+### Add the `Enums` trait to your model
 
 ```php
 namespace App;
@@ -81,7 +81,7 @@ Enumerations work really well in blade files too. Simply use the `getEnum` stati
 @endforeach
 ```
 
-Or use them with the LaravelCollective form builder:
+Or use them with the [LaravelCollective](https://laravelcollective.com/docs/5.4/html) form builder:
 
 ```php
 {{ Form::select('status', App\Post::getEnum('status')) }}
