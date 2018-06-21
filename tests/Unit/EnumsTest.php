@@ -2,9 +2,11 @@
 
 namespace TwoThirds\Testing\Unit;
 
+use Exception;
 use TwoThirds\Testing\TestCase;
 use TwoThirds\EloquentTraits\Enums;
 use Illuminate\Database\Eloquent\Model;
+use TwoThirds\EloquentTraits\DynamicMutators;
 use TwoThirds\EloquentTraits\Exceptions\InvalidEnumException;
 
 class EnumsTest extends TestCase
@@ -27,6 +29,25 @@ class EnumsTest extends TestCase
 
         $this->model = $this->instantiateModel();
         $this->class = get_class($this->model);
+    }
+
+    /**
+     * @test
+     */
+    public function missingDynamicMutatorsTraitThrowsException()
+    {
+        try {
+            $this->instantiateBadModel();
+        } catch (Exception $exception) {
+            $this->assertEquals(
+                'The Enums trait requires the DynamicMutators trait as a dependency.',
+                $exception->getMessage()
+            );
+
+            return;
+        }
+
+        $this->fail('Failed to throw excpetion when missing DynamicMutators class.');
     }
 
     /**
@@ -207,13 +228,25 @@ class EnumsTest extends TestCase
      * Instantiates a model based on an anonymous model class
      *
      * @return \Illuminate\Database\Eloquent\Model
+     */
+    protected function instantiateBadModel()
+    {
+        return new class extends Model {
+            use Enums;
+        };
+    }
+
+    /**
+     * Instantiates a model based on an anonymous model class
+     *
+     * @return \Illuminate\Database\Eloquent\Model
      *
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     protected function instantiateModel()
     {
         return new class extends Model {
-            use Enums;
+            use DynamicMutators, Enums;
 
             /**
              * The attributes that are mass assignable.

@@ -2,8 +2,8 @@
 
 namespace TwoThirds\EloquentTraits;
 
+use Exception;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use TwoThirds\EloquentTraits\Exceptions\InvalidEnumException;
 
 trait Enums
@@ -45,7 +45,7 @@ trait Enums
     }
 
     /**
-     * Get a Select field friendly version of an enum'd array.
+     * Get an array that will work with a select field
      *
      * @param string $field
      *
@@ -63,17 +63,31 @@ trait Enums
     }
 
     /**
+     * Boots the enums trait and registers the custom mutator
+     *
+     * @return void
+     */
+    public static function bootEnums()
+    {
+        if (! in_array(DynamicMutators::class, array_flip(class_uses_recursive(static::class)))) {
+            throw new Exception('The Enums trait requires the DynamicMutators trait as a dependency.');
+        }
+
+        static::registerSetter('enumSetter');
+    }
+
+    /**
      * Check for the presence of a property that starts
      *     with enum for the provided attribute
      *
      * @param string $field
      * @param mixed $value
      *
-     * @throws \TwoThirds\EloquentTraits\Exceptions\InvalidEnumException
+     * @throws InvalidEnumException
      *
      * @return $this
      */
-    public function setAttribute($field, $value)
+    public function enumSetter($field, $value)
     {
         if ($this->hasEnumProperty($field)) {
             if (! $this->isValidEnum($field, $value)) {
@@ -85,7 +99,7 @@ trait Enums
             }
         }
 
-        return parent::setAttribute($field, $value);
+        return $value;
     }
 
     /**
@@ -97,7 +111,7 @@ trait Enums
      */
     protected function getEnumProperty(string $field)
     {
-        return 'enum' . Str::plural(Str::studly($field));
+        return 'enum' . str_plural(studly_case($field));
     }
 
     /**
@@ -150,7 +164,8 @@ trait Enums
      */
     protected function isValidEnum(string $field, $value)
     {
-        return $this->isValueEnum($field, $value) || $this->isKeyedEnum($field, $value);
+        return $this->isValueEnum($field, $value) ||
+            $this->isKeyedEnum($field, $value);
     }
 
     /**

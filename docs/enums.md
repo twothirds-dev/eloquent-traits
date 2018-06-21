@@ -2,17 +2,18 @@
 
 The `Enums` trait is a really useful way to allow you to pre-define all of the valid values for a given field on a model and enforce that their values are set appropriately. This basically allows you to treat a field as a menu without the database overhead of dealing with true enum fields or lookup tables.
 
-### Add the `Enums` trait to your model
+### Add the `DynamicMutators` and `Enums` traits to your model
 
 ```php
 namespace App;
 
 use TwoThirds\EloquentTraits\Enums;
 use Illuminate\Database\Eloquent\Model;
+use TwoThirds\EloquentTraits\DynamicMutators;
 
 class Post extends Model
 {
-    use Enums;
+    use DynamicMutators, Enums;
     ...
 }
 ```
