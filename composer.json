@@ -25,6 +25,9 @@
         "two-thirds/artisan-anywhere": "^1.0",
         "two-thirds/laravel-test-suite": "^1.0"
     },
+    "suggest": {
+        "anthonymartin/geo-location": "Required if you want to test GeoLocation functionality with SqlLite ( TestsSqLiteGeoLocation )"
+    },
     "config": {
         "secure-http": true,
         "preferred-install": "dist",
