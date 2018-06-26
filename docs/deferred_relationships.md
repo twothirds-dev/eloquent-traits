@@ -20,7 +20,7 @@ class Project extends Model
 <a id="sample-usage-1"></a>
 ### Sample Usage
 
-The Project model has a ManyToMany relationship to the Users model via `owners`
+The Project model has a BelongsToMany relationship to the Users model via `owners`
 
 ```php
 class Project extends Model
