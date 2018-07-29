@@ -4,7 +4,6 @@ namespace TwoThirds\EloquentTraits;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
-use GoogleMaps\Facade\GoogleMapsFacade as GoogleMaps;
 
 trait GeoLocation
 {
@@ -100,12 +99,15 @@ trait GeoLocation
         }
 
         $response = json_decode(file_get_contents(
-            $url, false, stream_context_create([
+            $url,
+            false,
+            stream_context_create([
                 'ssl' => [
-                    'verify_peer' => false,
+                    'verify_peer'      => false,
                     'verify_peer_name' => false,
-                ]
-            ])));
+                ],
+            ])
+        ));
 
         if ($response->status === 'OK') {
             $this->location = [
