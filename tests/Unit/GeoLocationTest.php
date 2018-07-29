@@ -218,7 +218,7 @@ class GeoLocationTest extends TestCase
         $this->getFunctionMock('TwoThirds\EloquentTraits', 'file_get_contents')
             ->expects($this->once())
             ->with(
-                'http://maps.google.com/maps/api/geocode/json?sensor=false&address=' . urlencode($model->locationAddress())
+                'http://maps.google.com/maps/api/geocode/json?address=' . urlencode($model->locationAddress())
             )
             ->willReturn(json_encode([
                 'status'  => $status,
