@@ -91,7 +91,12 @@ trait GeoLocation
             return $this;
         }
 
-        $url = 'http://maps.google.com/maps/api/geocode/json?sensor=false&address=' . urlencode($this->locationAddress());
+        $url = 'http://maps.google.com/maps/api/geocode/json?address=' .
+            urlencode($this->locationAddress());
+
+        if ($key = config('services.google-maps.api-key')) {
+            $url .= "&key=$key";
+        }
 
         $response = json_decode(file_get_contents($url));
 

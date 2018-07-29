@@ -37,6 +37,18 @@ class Customer extends Model
     ...
 }
 ```
+### Using your Google Api Key
+
+For best results, you'll want to apply for an [api key](https://developers.google.com/maps/documentation/geocoding/get-api-key) and then add the following to your `config/services.php` file:
+
+```php
+<?php
+return [
+    'google-maps' => [
+        'api-key' => env('GOOGLE_MAPS_API_KEY'),
+    ],
+];
+```
 
 ### Automatic maintenance of the location field
 
