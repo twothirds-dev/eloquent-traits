@@ -26,7 +26,7 @@
         "two-thirds/laravel-test-suite": "^1.0"
     },
     "suggest": {
-        "anthonymartin/geo-location": "Required if you want to test GeoLocation functionality with SqlLite ( TestsSqLiteGeoLocation )"
+        "anthonymartin/geo-location": "Required to use geoLocation trait with a SqlLite database"
     },
     "config": {
         "secure-http": true,

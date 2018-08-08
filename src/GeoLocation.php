@@ -4,6 +4,8 @@ namespace TwoThirds\EloquentTraits;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\SQLiteConnection;
+use AnthonyMartin\GeoLocation\GeoLocation as GeoLocationLibrary;
 
 trait GeoLocation
 {
@@ -21,6 +23,10 @@ trait GeoLocation
      */
     public static function bootGeoLocation()
     {
+        if (DB::connection() instanceof SQLiteConnection) {
+            static::setupSQLiteFunctions();
+        }
+
         static::saving(function ($model) {
             $original = new static($model->getOriginal());
 
@@ -142,5 +148,49 @@ trait GeoLocation
             ->orderByRaw(
                 '(0 - distance) DESC'
             );
+    }
+
+    /**
+     * Stubs out all of the mysql geo location functions in sqlite
+     *
+     * @return void
+     */
+    public static function setupSQLiteFunctions()
+    {
+        DB::connection()
+            ->getPdo()
+            ->sqliteCreateFunction('POINT', function ($lat, $lng) {
+                return "POINT($lat $lng)";
+            }, 2);
+
+        DB::connection()
+            ->getPdo()
+            ->sqliteCreateFunction('astext', function ($param) {
+                return $param;
+            }, 1);
+
+        DB::connection()
+            ->getPdo()
+            ->sqliteCreateFunction('st_distance', function ($to, $from) {
+                list($latTo, $lonTo) = static::splitGeoPointString($to);
+                list($latFrom, $lonFrom) = static::splitGeoPointString($from);
+
+                return GeoLocationLibrary::fromDegrees($latTo, $lonTo)
+                    ->distanceTo(GeoLocationLibrary::fromDegrees($latFrom, $lonFrom), 'miles');
+            }, 2);
+    }
+
+    /**
+     * Gets the latitude and longitude from a point string
+     *
+     * @param string $point
+     *
+     * @return array
+     */
+    protected static function splitGeoPointString($point)
+    {
+        preg_match("/POINT\((?'latitude'.+) (?'longitude'.+)\)/", $point, $matches);
+
+        return [$matches['latitude'], $matches['longitude']];
     }
 }

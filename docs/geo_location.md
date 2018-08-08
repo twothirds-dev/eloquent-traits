@@ -100,12 +100,12 @@ App\Customer::distanceFrom(['41.2812977', '-95.9424159'])->get();
 App\Customer::distanceFrom('41.2812977, -95.9424159')->get();
 ```
 
-### Testing with SqLite
+### Using with SqLite
 
-SqLite doesn't have all of the geolocation functions built in, so in order to test models that use this trait, we have to fake it. First, you need to add the following package to your development dependencies:
+SqLite doesn't have all of the geolocation functions built in, so in order for this trait to not fail completely, we have to fake them. This is primarily for testing purposes. Just add the following package to your development dependencies:
 
 ```
 composer require --dev anthonymartin/geo-location
 ```
 
-Then, just add the `TestsSqLiteGeoLocation` trait to your test class and call `$this->setupGeoLocationTesting()` before you get started.
+NOTE: This does not add proper geo spatial support to SqLite in any way. This just prevents your tests from going down in a [blaze of glory](https://www.youtube.com/watch?v=MfmYCM4CS8o).
