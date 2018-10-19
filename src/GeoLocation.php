@@ -106,7 +106,8 @@ trait GeoLocation
             $url .= "&key=$key";
         }
 
-        $response = (new Client)->request('GET', $url, ['verify' => false]);
+        $response = app(Client::class)
+            ->request('GET', $url, ['verify' => false]);
 
         $body = json_decode($response->getBody());
 

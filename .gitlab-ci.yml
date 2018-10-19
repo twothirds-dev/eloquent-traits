@@ -13,13 +13,12 @@ before_script:
 
 tests:
     script:
-        - phpdbg -qrr vendor/bin/phpunit
+        - php artisan test:phpunit
 
 phpCsFixer:
     script:
-        - php vendor/bin/php-cs-fixer fix --dry-run --verbose --diff --diff-format=udiff --config=./phpcs.php
+        - php artisan test:php-cs-fixer
 
 messDetector:
     script:
-        - php vendor/bin/phpmd src/ text ./phpmd.xml
-        - php vendor/bin/phpmd tests/ text ./phpmd.xml
+        - php artisan test:phpmd

@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.1.3",
         "illuminate/database": "5.*",
         "illuminate/support": "5.*",
         "guzzlehttp/guzzle": "^6.2"
@@ -20,11 +20,10 @@
         "friendsofphp/php-cs-fixer": "^2.12",
         "mockery/mockery": "^1.1",
         "orchestra/testbench": "^3.6",
-        "php-mock/php-mock-phpunit": "^2.1",
         "phpmd/phpmd": "^2.6",
         "phpunit/phpunit": "~7.0",
         "two-thirds/artisan-anywhere": "^1.0",
-        "two-thirds/laravel-test-suite": "^1.0"
+        "two-thirds/laravel-test-suite": "^3.0"
     },
     "suggest": {
         "anthonymartin/geo-location": "Required to use geoLocation trait with a SqlLite database"
