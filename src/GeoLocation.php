@@ -2,6 +2,8 @@
 
 namespace TwoThirds\EloquentTraits;
 
+use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\SQLiteConnection;
@@ -104,23 +106,21 @@ trait GeoLocation
             $url .= "&key=$key";
         }
 
-        $response = json_decode(file_get_contents(
-            $url,
-            false,
-            stream_context_create([
-                'ssl' => [
-                    'verify_peer'      => false,
-                    'verify_peer_name' => false,
-                ],
-            ])
-        ));
+        $response = (new Client)->request('GET', $url, ['verify' => false]);
 
-        if ($response->status === 'OK') {
-            $this->location = [
-                $response->results[0]->geometry->location->lat,
-                $response->results[0]->geometry->location->lng,
-            ];
+        $body = json_decode($response->getBody());
+
+        if ($response->getStatusCode() !== 200 || $body->status !== 'OK') {
+            throw new Exception(
+                'Google api returned non 200/OK status: ' . json_encode($body),
+                $response->getStatusCode()
+            );
         }
+
+        $this->location = [
+            $body->results[0]->geometry->location->lat,
+            $body->results[0]->geometry->location->lng,
+        ];
 
         return $this;
     }
