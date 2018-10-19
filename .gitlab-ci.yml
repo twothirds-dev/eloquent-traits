@@ -9,7 +9,7 @@ before_script:
     - php -r "unlink('composer-setup.php'); unlink('installer.sig');"
     - export APP_ENV=testing
     - export APP_KEY=$(php -r 'echo md5(uniqid());')
-    - php composer.phar install --prefer-dist --no-progress --no-suggest --quiet
+    - php composer.phar install --prefer-dist --no-progress --no-suggest
 
 tests:
     script:
