@@ -15,7 +15,7 @@ $artisan->registerCommands([
     TwoThirds\TestSuite\Console\RunTestCommand::class,
     TwoThirds\TestSuite\Console\RunPhpUnitCommand::class,
     TwoThirds\TestSuite\Console\RunPhpCsFixerCommand::class,
-    TwoThirds\TestSuite\Console\RunPhpMdCommand::class
+    TwoThirds\TestSuite\Console\RunPhpmdCommand::class
 ]);
 
 exit($artisan->handle());
