@@ -13,12 +13,12 @@ before_script:
 
 tests:
     script:
-        - php artisan test:phpunit
+        - php artisan test:phpunit --without-tty
 
 phpCsFixer:
     script:
-        - php artisan test:php-cs-fixer
+        - php artisan test:php-cs-fixer --without-tty
 
 messDetector:
     script:
-        - php artisan test:phpmd
+        - php artisan test:phpmd --without-tty
