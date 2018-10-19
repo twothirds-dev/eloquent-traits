@@ -9,17 +9,16 @@ before_script:
     - php -r "unlink('composer-setup.php'); unlink('installer.sig');"
     - export APP_ENV=testing
     - export APP_KEY=$(php -r 'echo md5(uniqid());')
-    - php composer.phar install --prefer-dist --no-progress --no-suggest --quiet
+    - php composer.phar install --prefer-dist --no-progress --no-suggest
 
 tests:
     script:
-        - phpdbg -qrr vendor/bin/phpunit
+        - php artisan test:phpunit --without-tty
 
 phpCsFixer:
     script:
-        - php vendor/bin/php-cs-fixer fix --dry-run --verbose --diff --diff-format=udiff --config=./phpcs.php
+        - php artisan test:php-cs-fixer --without-tty
 
 messDetector:
     script:
-        - php vendor/bin/phpmd src/ text ./phpmd.xml
-        - php vendor/bin/phpmd tests/ text ./phpmd.xml
+        - php artisan test:phpmd --without-tty

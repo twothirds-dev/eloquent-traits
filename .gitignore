@@ -5,3 +5,4 @@
 /*.sublime-workspace
 /coverage/
 /storage/
+.phpunit.result.cache

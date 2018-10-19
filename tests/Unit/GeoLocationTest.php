@@ -2,7 +2,9 @@
 
 namespace TwoThirds\Testing\Unit;
 
-use phpmock\phpunit\PHPMock;
+use Mockery;
+use Exception;
+use GuzzleHttp\Client;
 use TwoThirds\Testing\TestCase;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
@@ -10,8 +12,6 @@ use TwoThirds\EloquentTraits\GeoLocation;
 
 class GeoLocationTest extends TestCase
 {
-    use PHPMock;
-
     /**
      * @test
      */
@@ -63,6 +63,33 @@ class GeoLocationTest extends TestCase
 
         $class->fireSaving();
         $this->assertEquals([123, 234], $class->location);
+    }
+
+    /**
+     * @test
+     */
+    public function throwsExceptionWhenGoogleFailsOnSaving()
+    {
+        $class = $this->getClass([
+            'address'  => '1234 Original street',
+            'location' => [10, 20],
+        ]);
+
+        // Pretend that this is coming from the database
+        $class->syncOriginal();
+
+        // Set a new address and presume that the google api will get called with it
+        $class->address = '2345 New street';
+        $this->googleApiShouldThrowException($class, 'OK', [123, 234]);
+
+        try {
+            $class->fireSaving();
+        } catch (Exception $exception) {
+            $this->assertEquals(404, $exception->getCode());
+            return;
+        }
+
+        $this->fail('Failed to catch exception from google lookup');
     }
 
     /**
@@ -213,19 +240,65 @@ class GeoLocationTest extends TestCase
      *
      * @return $this
      */
-    protected function googleApiShouldBeCalled($model, $status = 'OK', $location = [123, 234])
+    protected function googleApiShouldBeCalled(Model $model, string $status = 'OK', array $location = [123, 234])
     {
-        $this->getFunctionMock('TwoThirds\EloquentTraits', 'file_get_contents')
-            ->expects($this->once())
+        $mock = Mockery::mock(Client::class);
+        app()->instance(Client::class, $mock);
+
+        $mock->shouldReceive('request')
             ->with(
-                'https://maps.google.com/maps/api/geocode/json?address=' . urlencode($model->locationAddress())
+                'GET',
+                'https://maps.google.com/maps/api/geocode/json?address=' . urlencode($model->locationAddress()),
+                ['verify' => false]
             )
-            ->willReturn(json_encode([
+            ->andReturnSelf();
+
+        $mock->shouldReceive('getBody')
+            ->andReturn(json_encode([
                 'status'  => $status,
                 'results' => [['geometry' => [
                     'location' => ['lat' => $location[0], 'lng' => $location[1]],
                 ]]],
             ]));
+
+        $mock->shouldReceive('getStatusCode')
+            ->andReturn(200);
+
+        return $this;
+    }
+
+    /**
+     * Mocks out the expected call to the google maps api throws an exception
+     *
+     * @param /Illuminate\Database\Eloquent\Model $model
+     * @param string $status
+     * @param array $location
+     *
+     * @return $this
+     */
+    protected function googleApiShouldThrowException(Model $model, string $status = 'OK', array $location = [123, 234])
+    {
+        $mock = Mockery::mock(Client::class);
+        app()->instance(Client::class, $mock);
+
+        $mock->shouldReceive('request')
+            ->with(
+                'GET',
+                'https://maps.google.com/maps/api/geocode/json?address=' . urlencode($model->locationAddress()),
+                ['verify' => false]
+            )
+            ->andReturnSelf();
+
+        $mock->shouldReceive('getBody')
+            ->andReturn(json_encode([
+                'status'  => $status,
+                'results' => [['geometry' => [
+                    'location' => ['lat' => $location[0], 'lng' => $location[1]],
+                ]]],
+            ]));
+
+        $mock->shouldReceive('getStatusCode')
+            ->andReturn(404);
 
         return $this;
     }
@@ -237,8 +310,10 @@ class GeoLocationTest extends TestCase
      */
     protected function googleApiShouldntBeCalled()
     {
-        $this->getFunctionMock('TwoThirds\EloquentTraits', 'file_get_contents')
-            ->expects($this->never());
+        $mock = Mockery::mock(Client::class);
+        app()->instance(Client::class, $mock);
+
+        $mock->shouldNotReceive('request');
 
         return $this;
     }
