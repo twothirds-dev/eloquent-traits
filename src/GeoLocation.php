@@ -2,9 +2,9 @@
 
 namespace TwoThirds\EloquentTraits;
 
-use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\SQLiteConnection;
 use AnthonyMartin\GeoLocation\GeoLocation as GeoLocationLibrary;
@@ -112,10 +112,9 @@ trait GeoLocation
         $body = json_decode($response->getBody());
 
         if ($response->getStatusCode() !== 200 || $body->status !== 'OK') {
-            throw new Exception(
-                'Google api returned non 200/OK status: ' . json_encode($body),
-                $response->getStatusCode()
-            );
+            Log::warn("Google api returned non 200/OK status with $url: " . json_encode($body));
+
+            return $this;
         }
 
         $this->location = [
