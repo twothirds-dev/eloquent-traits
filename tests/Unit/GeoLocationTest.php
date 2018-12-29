@@ -5,7 +5,9 @@ namespace TwoThirds\Testing\Unit;
 use Mockery;
 use Exception;
 use GuzzleHttp\Client;
+use Illuminate\Support\Str;
 use TwoThirds\Testing\TestCase;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use TwoThirds\EloquentTraits\GeoLocation;
@@ -80,16 +82,9 @@ class GeoLocationTest extends TestCase
 
         // Set a new address and presume that the google api will get called with it
         $class->address = '2345 New street';
-        $this->googleApiShouldThrowException($class, 'OK', [123, 234]);
+        $this->googleApiShouldLogError($class, 'OK', [123, 234]);
 
-        try {
-            $class->fireSaving();
-        } catch (Exception $exception) {
-            $this->assertEquals(404, $exception->getCode());
-            return;
-        }
-
-        $this->fail('Failed to catch exception from google lookup');
+        $class->fireSaving();
     }
 
     /**
@@ -276,7 +271,7 @@ class GeoLocationTest extends TestCase
      *
      * @return $this
      */
-    protected function googleApiShouldThrowException(Model $model, string $status = 'OK', array $location = [123, 234])
+    protected function googleApiShouldLogError(Model $model, string $status = 'OK', array $location = [123, 234])
     {
         $mock = Mockery::mock(Client::class);
         app()->instance(Client::class, $mock);
@@ -299,6 +294,11 @@ class GeoLocationTest extends TestCase
 
         $mock->shouldReceive('getStatusCode')
             ->andReturn(404);
+
+        Log::shouldReceive('warn')
+            ->withArgs(function ($message) {
+                return Str::contains($message, 'Google api returned non 200/OK status with');
+            });
 
         return $this;
     }
