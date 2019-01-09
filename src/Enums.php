@@ -103,6 +103,22 @@ trait Enums
     }
 
     /**
+     * Gets the key of the current enum value
+     *
+     * @param string $field
+     *
+     * @return mixed|false
+     */
+    public function getEnumKey($field)
+    {
+        if ($this->hasEnumProperty($field)) {
+            return array_flip(static::getEnum($field))[$this->$field] ?? null;
+        }
+
+        return false;
+    }
+
+    /**
      * Gets the expected enum property
      *
      * @param string $field

@@ -108,7 +108,9 @@ class EnumsTest extends TestCase
      */
     public function gettingAnInvalidEnumFieldReturnsFalse()
     {
-        $this->assertFalse($this->class::getEnum('invalid'));
+        $this->assertFalse(
+            $this->class::getEnum('invalid')
+        );
     }
 
     /**
@@ -202,6 +204,56 @@ class EnumsTest extends TestCase
         }
 
         $this->fail('Failed to throw excpetion when setting invalid enum key');
+    }
+
+    /**
+     * @test
+     */
+    public function getValidKeyBasic()
+    {
+        $this->model->status = 'Started';
+        $this->assertEquals(0, $this->model->getEnumKey('status'));
+
+        $this->model->status = 'In Progress';
+        $this->assertEquals(1, $this->model->getEnumKey('status'));
+
+        $this->model->status = 'Complete';
+        $this->assertEquals(2, $this->model->getEnumKey('status'));
+    }
+
+    /**
+     * @test
+     */
+    public function getValidKeyAssoc()
+    {
+        $this->model->city = 'Omaha';
+        $this->assertEquals('om', $this->model->getEnumKey('city'));
+
+        $this->model->city = 'New York';
+        $this->assertEquals('ny', $this->model->getEnumKey('city'));
+
+        $this->model->city = 'San Francisco';
+        $this->assertEquals('sf', $this->model->getEnumKey('city'));
+    }
+
+    /**
+     * @test
+     */
+    public function getUnsetKeyReturnsNull()
+    {
+        $this->assertNull(
+            $this->model->getEnumKey('status')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getInvalidKeyReturnsFalse()
+    {
+        $this->assertFalse(
+            $this->model->getEnumKey('invalid')
+        );
     }
 
     /**

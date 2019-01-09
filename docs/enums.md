@@ -102,3 +102,19 @@ $factory->define(App\Post::class, function (Faker\Generator $faker) {
     ];
 });
 ```
+
+If you need to get the key of a currently set enum field, use the `getEnumKey` method:
+
+```php
+$user->status = 'Published';
+
+$user->getEnumKey('status') === 2; // true
+```
+
+Using the associative status example:
+
+```php
+$user->status = 'Archived';
+
+$user->getEnumKey('status') === 'ar'; // true
+```
