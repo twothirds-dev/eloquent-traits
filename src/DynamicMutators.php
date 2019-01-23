@@ -25,7 +25,7 @@ trait DynamicMutators
      */
     public static function getDynamicSetters()
     {
-        return static::$dynamicSetters;
+        return static::$dynamicSetters[get_called_class()] ?? [];
     }
 
     /**
@@ -35,7 +35,7 @@ trait DynamicMutators
      */
     public static function getDynamicGetters()
     {
-        return static::$dynamicGetters;
+        return static::$dynamicGetters[get_called_class()] ?? [];
     }
 
     /**
@@ -47,7 +47,7 @@ trait DynamicMutators
      */
     public function getAttribute($key)
     {
-        foreach (static::$dynamicGetters as $getter) {
+        foreach (static::getDynamicGetters() as $getter) {
             if (! is_null($result = $this->$getter($key))) {
                 return $result;
             }
@@ -66,7 +66,7 @@ trait DynamicMutators
      */
     public function setAttribute($field, $value)
     {
-        foreach (static::$dynamicSetters as $setter) {
+        foreach (static::getDynamicSetters() as $setter) {
             $value = $this->$setter($field, $value);
         }
 
@@ -82,8 +82,14 @@ trait DynamicMutators
      */
     protected static function registerGetter(string $getter)
     {
-        if (! in_array($getter, static::$dynamicGetters)) {
-            array_push(static::$dynamicGetters, $getter);
+        $class = get_called_class();
+
+        if (! isset(static::$dynamicGetters[$class])) {
+            static::$dynamicGetters[$class] = [];
+        }
+
+        if (! in_array($getter, static::$dynamicGetters[$class])) {
+            array_push(static::$dynamicGetters[$class], $getter);
         }
     }
 
@@ -96,8 +102,14 @@ trait DynamicMutators
      */
     protected static function registerSetter(string $setter)
     {
-        if (! in_array($setter, static::$dynamicSetters)) {
-            array_push(static::$dynamicSetters, $setter);
+        $class = get_called_class();
+
+        if (! isset(static::$dynamicSetters[$class])) {
+            static::$dynamicSetters[$class] = [];
+        }
+
+        if (! in_array($setter, static::$dynamicSetters[$class])) {
+            array_push(static::$dynamicSetters[$class], $setter);
         }
     }
 }
