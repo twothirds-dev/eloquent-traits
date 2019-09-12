@@ -23,7 +23,7 @@ class EnumsTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -57,7 +57,7 @@ class EnumsTest extends TestCase
     {
         $result = $this->class::getEnum('status');
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertContains('Started', $result);
         $this->assertContains('In Progress', $result);
         $this->assertContains('Complete', $result);
@@ -94,7 +94,7 @@ class EnumsTest extends TestCase
     {
         $result = $this->class::getEnum('city');
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('om', $result);
         $this->assertEquals('Omaha', $result['om']);
         $this->assertArrayHasKey('ny', $result);

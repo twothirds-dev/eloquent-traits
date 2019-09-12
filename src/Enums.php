@@ -4,6 +4,7 @@ namespace TwoThirds\EloquentTraits;
 
 use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use TwoThirds\EloquentTraits\Exceptions\InvalidEnumException;
 
 trait Enums
@@ -38,7 +39,7 @@ trait Enums
     public static function randomEnum(string $field)
     {
         if ($array = static::getEnum($field)) {
-            return array_random($array);
+            return Arr::random($array);
         }
 
         return false;
@@ -127,7 +128,7 @@ trait Enums
      */
     protected function getEnumProperty(string $field)
     {
-        return 'enum' . str_plural(studly_case($field));
+        return 'enum' . Str::plural(Str::studly($field));
     }
 
     /**
