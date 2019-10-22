@@ -112,7 +112,7 @@ trait GeoLocation
         $body = json_decode($response->getBody());
 
         if ($response->getStatusCode() !== 200 || $body->status !== 'OK') {
-            Log::warn("Google api returned non 200/OK status with $url: " . json_encode($body));
+            Log::warning("Google api returned non 200/OK status with $url: " . json_encode($body));
 
             return $this;
         }

@@ -295,7 +295,7 @@ class GeoLocationTest extends TestCase
         $mock->shouldReceive('getStatusCode')
             ->andReturn(404);
 
-        Log::shouldReceive('warn')
+        Log::shouldReceive('warning')
             ->withArgs(function ($message) {
                 return Str::contains($message, 'Google api returned non 200/OK status with');
             });
