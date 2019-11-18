@@ -23,7 +23,7 @@ This is a collection of traits that you can add to your Laravel Eloquent models 
 
 Laravel Eloquent Traits can be installed through composer:
 
-    composer require --dev two-thirds/eloquent-traits
+    composer require two-thirds/eloquent-traits
 
 <a id="available-traits"></a>
 # Available Traits
