@@ -43,5 +43,12 @@
         "psr-4": {
             "TwoThirds\\Testing\\": "tests"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TwoThirds\\EloquentTraits\\EloquentTraitsServiceProvider"
+            ]
+        }
     }
 }
