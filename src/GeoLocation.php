@@ -2,11 +2,14 @@
 
 namespace TwoThirds\EloquentTraits;
 
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\SQLiteConnection;
+use Doctrine\DBAL\Platforms\MySQL57Platform;
 use AnthonyMartin\GeoLocation\GeoLocation as GeoLocationLibrary;
 
 trait GeoLocation
@@ -27,6 +30,8 @@ trait GeoLocation
     {
         if (DB::connection() instanceof SQLiteConnection) {
             static::setupSQLiteFunctions();
+        } elseif (! DB::connection() instanceof MySqlConnection) {
+            throw new Exception('GeoLocation Eloquent Trait is not compatible with non-mysql databases');
         }
 
         static::saving(function ($model) {
@@ -47,8 +52,16 @@ trait GeoLocation
      */
     public function scopeWithGeo(Builder $query)
     {
+        //AsText() is deprecated as of MySQL 5.7.6; Use ST_AsText() instead.
+        $platform = app('db')->connection()->getDoctrineConnection()->getDatabasePlatform();
+
+        if (get_class($platform) === MySQL57Platform::class) {
+            return $query->selectRaw($this->getTable() . '.*')
+                ->selectRaw('astext(location) as location');
+        }
+
         return $query->selectRaw($this->getTable() . '.*')
-            ->selectRaw('astext(location) as location');
+            ->selectRaw('st_astext(location) as location');
     }
 
     /**
@@ -166,6 +179,12 @@ trait GeoLocation
         DB::connection()
             ->getPdo()
             ->sqliteCreateFunction('astext', function ($param) {
+                return $param;
+            }, 1);
+
+        DB::connection()
+            ->getPdo()
+            ->sqliteCreateFunction('st_astext', function ($param) {
                 return $param;
             }, 1);
 
