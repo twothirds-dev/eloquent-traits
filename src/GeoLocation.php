@@ -30,9 +30,7 @@ trait GeoLocation
     {
         if (DB::connection() instanceof SQLiteConnection) {
             static::setupSQLiteFunctions();
-        }
-
-        if (! DB::connection() instanceof MySqlConnection) {
+        } elseif (! DB::connection() instanceof MySqlConnection) {
             throw new Exception('GeoLocation Eloquent Trait is not compatible with non-mysql databases');
         }
 

@@ -29,7 +29,7 @@ class GeoLocationTest extends TestCase
         );
 
         $this->assertContains(
-            'astext(location) as location',
+            'st_astext(location) as location',
             $builder->getQuery()->columns
         );
     }
@@ -196,6 +196,8 @@ class GeoLocationTest extends TestCase
         $model::$autoLocationUpdate = false;
 
         $model->updateLocation();
+
+        $model::$autoLocationUpdate = true;
     }
 
     /**
